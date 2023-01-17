@@ -64,7 +64,7 @@ const TopNav = () => {
           <a>Register</a>
         </Link>
       </Item>
-      <Item onClick={logout} icon={<LogoutOutlined />} className="float-right">
+      <Item onClick={logout} icon={<LogoutOutlined />} className="float-end">
         Logout
       </Item>
     </Menu>
