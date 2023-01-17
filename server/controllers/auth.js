@@ -1,6 +1,17 @@
 import User from "../models/user";
 import { hashPassword, comparePassword } from "../utils/auth";
 import jwt from "jsonwebtoken";
+import { nanoid } from "nanoid";
+import AWS from "aws-sdk";
+
+const awsConfig = {
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+  apiVersion: process.env.AWS_API_VERSION,
+};
+
+const SES = new AWS.SES(awsConfig);
 
 export const register = async (req, res) => {
   try {
@@ -89,3 +100,56 @@ export const logout = async (req, res) => {
         console.log(err);
       }
     };
+
+    export const forgotPassword = async (req, res) => {
+      try {
+        const { email } = req.body;
+        // console.log(email);
+        const shortCode = nanoid(6).toUpperCase();
+        const user = await User.findOneAndUpdate(
+          { email },
+          { passwordResetCode: shortCode }
+        );
+        if (!user) return res.status(400).send("User not found");
+    
+        // prepare for email
+        const params = {
+          Source: process.env.EMAIL_FROM,
+          Destination: {
+            ToAddresses: ['ibraaa33@icloud.com'],
+          },
+          Message: {
+            Body: {
+              Html: {
+                Charset: "UTF-8",
+                Data: `
+                    <html>
+                      <h1>Reset password</h1>
+                      <p>User this code to reset your password</p>
+                      <h2 style="color:red;">${shortCode}</h2>
+                      <i>edemy.com</i>
+                    </html>
+                  `,
+              },
+            },
+            Subject: {
+              Charset: "UTF-8",
+              Data: "Reset Password",
+            },
+          },
+        };
+    
+        const emailSent = SES.sendEmail(params).promise();
+        emailSent
+          .then((data) => {
+            console.log(data);
+            res.json({ ok: true });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    
