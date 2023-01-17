@@ -55,7 +55,7 @@ export const login = async (req, res) => {
     const match = await comparePassword(password, user.password);
     // create signed jwt
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "30d",
+      expiresIn: "7d",
     });
     // return user and token to client, exclude hashed password
     user.password = undefined;
@@ -80,3 +80,12 @@ export const logout = async (req, res) => {
     }}
 
   
+    export const currentUser = async (req, res) => {
+      try {
+        const user = await User.findById(req.user._id).select("-password").exec();
+        console.log("CURRENT_USER", user);
+        return res.json({ ok: true });
+      } catch (err) {
+        console.log(err);
+      }
+    };
