@@ -6,20 +6,23 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 
+
 import {
   AppstoreOutlined,
   LoginOutlined,
+  CoffeeOutlined,
   LogoutOutlined,
   UserAddOutlined,
 } from "@ant-design/icons";
 
-const { Item } = Menu;
+const { Item, SubMenu } = Menu;
 
 const TopNav = () => {
   const [current, setCurrent] = useState("");
 
   const { state, dispatch } = useContext(Context);
-
+  const { user } = state;
+  
   const router = useRouter();
 
   useEffect(() => {
@@ -35,39 +38,52 @@ const TopNav = () => {
   };
   return (
     <Menu mode="horizontal" selectedKeys={[current]}>
-      <Item
-        key="/"
-        onClick={(e) => setCurrent(e.key)}
-        icon={<AppstoreOutlined />}
-      >
-        <Link legacyBehavior href="/">
-          <a>App</a>
-        </Link>
-      </Item>
+    <Item
+      key="/"
+      onClick={(e) => setCurrent(e.key)}
+      icon={<AppstoreOutlined />}
+    >
+      <Link legacyBehavior href="/">
+        <a>App</a>
+      </Link>
+    </Item>
 
-      <Item
-        key="/login"
-        onClick={(e) => setCurrent(e.key)}
-        icon={<LoginOutlined />}
-      >
-        <Link legacyBehavior  href="/login">
-          <a>Login</a>
-        </Link>
-      </Item>
+    {user === null && (
+      <>
+        <Item
+          key="/login"
+          onClick={(e) => setCurrent(e.key)}
+          icon={<LoginOutlined />}
+        >
+          <Link legacyBehavior href="/login">
+            <a>Login</a>
+          </Link>
+        </Item>
 
-      <Item
-        key="/register"
-        onClick={(e) => setCurrent(e.key)}
-        icon={<UserAddOutlined />}
+        <Item
+          key="/register"
+          onClick={(e) => setCurrent(e.key)}
+          icon={<UserAddOutlined />}
+        >
+          <Link legacyBehavior href="/register">
+            <a>Register</a>
+          </Link>
+        </Item>
+      </>
+    )}
+
+    {user !== null && (
+      <SubMenu
+        icon={<CoffeeOutlined />}
+        title={user && user.firstName}
+        className="float-end"
       >
-        <Link legacyBehavior href="/register">
-          <a>Register</a>
-        </Link>
-      </Item>
-      <Item onClick={logout} icon={<LogoutOutlined />} className="float-end">
-        Logout
-      </Item>
-    </Menu>
+        <Item onClick={logout} className="float-end">
+          Logout
+        </Item>
+      </SubMenu>
+    )}
+  </Menu>
   );
 };
 
