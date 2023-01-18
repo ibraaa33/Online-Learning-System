@@ -15,7 +15,7 @@ import {
   UserAddOutlined,
 } from "@ant-design/icons";
 
-const { Item, SubMenu } = Menu;
+const { Item, SubMenu,ItemGroup  } = Menu;
 
 const TopNav = () => {
   const [current, setCurrent] = useState("");
@@ -78,9 +78,15 @@ const TopNav = () => {
         title={user && user.firstName}
         className="float-end"
       >
-        <Item onClick={logout} className="float-end">
-          Logout
-        </Item>
+       
+        <ItemGroup>
+            <Item key="/user">
+              <Link legacyBehavior href="/user">
+                <a>Dashboard</a>
+              </Link>
+            </Item>
+            <Item onClick={logout}>Logout</Item>
+          </ItemGroup>
       </SubMenu>
     )}
   </Menu>
