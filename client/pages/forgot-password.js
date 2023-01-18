@@ -24,7 +24,11 @@ const ForgotPassword = () => {
   // redirect if user is logged in
   useEffect(() => {
     if (user !== null) router.push("/");
+<<<<<<< HEAD
   }, []);
+=======
+  }, [user]);
+>>>>>>> branch1
 
   const handleSubmit = async (e) => {
     e.preventDefault();
