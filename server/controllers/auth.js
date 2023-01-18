@@ -116,7 +116,7 @@ export const logout = async (req, res) => {
         const params = {
           Source: process.env.EMAIL_FROM,
           Destination: {
-            ToAddresses: ['ibraaa33@icloud.com'],
+            ToAddresses: [email],
           },
           Message: {
             Body: {
@@ -127,7 +127,7 @@ export const logout = async (req, res) => {
                       <h1>Reset password</h1>
                       <p>User this code to reset your password</p>
                       <h2 style="color:red;">${shortCode}</h2>
-                      <i>edemy.com</i>
+                      <i>Online Learning System</i>
                     </html>
                   `,
               },
@@ -152,4 +152,25 @@ export const logout = async (req, res) => {
         console.log(err);
       }
     };
+    export const resetPassword = async (req, res) => {
+      try {
+        const { email, code, newPassword } = req.body;
+        // console.table({ email, code, newPassword });
+        const hashedPassword = await hashPassword(newPassword);
     
+        const user = User.findOneAndUpdate(
+          {
+            email,
+            passwordResetCode: code,
+          },
+          {
+            password: hashedPassword,
+            passwordResetCode: "",
+          }
+        ).exec();
+        res.json({ ok: true });
+      } catch (err) {
+        console.log(err);
+        return res.status(400).send("Error! Try again.");
+      }
+    };

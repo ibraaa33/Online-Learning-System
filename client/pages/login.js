@@ -91,6 +91,11 @@ const Login = () => {
             <a>Register</a>
           </Link>
         </p>
+        <p className="text-center">
+          <Link legacyBehavior href="/forgot-password">
+            <a className="text-danger">Forgot password</a>
+          </Link>
+        </p>
       </div>
     </>
   );
